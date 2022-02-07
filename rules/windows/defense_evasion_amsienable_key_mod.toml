@@ -1,7 +1,7 @@
 [metadata]
 creation_date = "2021/06/01"
 maturity = "production"
-updated_date = "2021/06/01"
+updated_date = "2022/02/07"
 
 [rule]
 author = ["Elastic"]
@@ -15,9 +15,41 @@ index = ["winlogbeat-*", "logs-endpoint.events.*", "logs-windows.*"]
 language = "eql"
 license = "Elastic License v2"
 name = "Modification of AmsiEnable Registry Key"
+note = """## Triage and analysis
+
+### Investigating Modification of AmsiEnable Registry Key
+
+The Antimalware Scan Interface (AMSI) is an interface on which security products can gain visibility into script content,
+enabling scanning for malicious content.
+
+Since AMSI is widely used across security products, attackers can disable it to evade detections that rely on it.
+
+This rule monitors the modifications to the `Software\\Microsoft\\Windows Script\\Settings\\AmsiEnable` registry key.
+
+#### Possible investigation steps:
+
+- Identify the user that performed the action
+- Investigate program execution chain (parent process tree)
+- Investigate other alerts related to the user/host in the last 48 hours
+
+### False Positive Analysis
+
+- This modification should not happen legitimately. Any potential B-TP (Benign True Positive) should be mapped and monitored
+by the security team as these modifications expose the host for malware infections.
+
+### Related Rules
+
+- Microsoft Windows Defender Tampering - fe794edd-487f-4a90-b285-3ee54f2af2d3
+
+### Response and Remediation
+
+- Immediate response should be taken to validate, investigate, and potentially contain the activity to prevent further
+post-compromise behavior.
+"""
 references = [
     "https://hackinparis.com/data/slides/2019/talks/HIP2019-Dominic_Chell-Cracking_The_Perimeter_With_Sharpshooter.pdf",
     "https://docs.microsoft.com/en-us/windows/win32/amsi/antimalware-scan-interface-portal",
+    "https://i.blackhat.com/briefings/asia/2018/asia-18-Tal-Liberman-Documenting-the-Undocumented-The-Rise-and-Fall-of-AMSI.pdf",
 ]
 risk_score = 73
 rule_id = "f874315d-5188-4b4a-8521-d1c73093a7e4"
