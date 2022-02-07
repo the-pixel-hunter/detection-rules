@@ -1,7 +1,7 @@
 [metadata]
 creation_date = "2020/02/18"
 maturity = "production"
-updated_date = "2021/09/23"
+updated_date = "2022/02/07"
 
 [rule]
 author = ["Elastic"]
@@ -14,6 +14,43 @@ index = ["winlogbeat-*", "logs-endpoint.events.*", "logs-windows.*"]
 language = "eql"
 license = "Elastic License v2"
 name = "Volume Shadow Copy Deletion via WMIC"
+note = """## Triage and analysis.
+
+### Investigating Volume Shadow Copy Deletion via WMIC
+
+The Volume Shadow Copy Service (VSS) is a Windows feature that enables system administrators to take snapshots of volumes
+that can be later restored or mounted to recover specific files or folders.
+
+A typical step in the playbooks of attackers that have the goal of deploying Ransomware is to delete Volume Shadow Copies
+to inhibit any chance of restoring the data without paying the ransom, making any action that deletes shadow copies worth
+monitoring.
+
+This rule monitors the execution of wmic.exe to interact with VSS via the shadowcopy alias and delete parameter.
+
+#### Possible investigation steps:
+
+- Identify the user that performed the action and confirm whether or not the user should perform this kind of activity
+- Contact the user and confirm if he is aware of this activity
+- In case of resize operation, check if the resize value is equal to suspicious values like 401MB
+- Investigate other alerts related to the user/host in the last 48 hours.
+
+### False Positive Analysis
+
+- This rule has chances of producing B-TPs (Benign True Positives). If this activity is expected and noisy in your environment,
+consider working with Exceptions, preferably using a user and command line combination.
+
+### Related Rules
+
+- Volume Shadow Copy Deleted or Resized via VssAdmin - b5ea4bfe-a1b2-421f-9d47-22a75a6f2921
+- Volume Shadow Copy Deletion via PowerShell - d99a037b-c8e2-47a5-97b9-170d076827c4
+
+### Response and Remediation
+
+- Immediate response should be taken to validate, investigate, and potentially contain the activity to prevent further
+post-compromise behavior.
+- If triage indicates this activity is Suspicious, immediately start the Incident Response. If this activity was identified
+in Domain Controllers or vital servers, consider the whole Domain compromised.
+"""
 risk_score = 73
 rule_id = "dc9c1f74-dac3-48e3-b47f-eb79db358f57"
 severity = "high"
