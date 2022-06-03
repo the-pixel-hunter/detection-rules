@@ -29,6 +29,6 @@ timestamp_override = "event.ingested"
 type = "query"
 
 query = '''
-http.response.status_code:405
+http.response.status_code:405 and event.ingested:now
 '''
 
